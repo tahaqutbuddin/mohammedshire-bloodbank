@@ -77,17 +77,26 @@ class Donor
     {
         $obj = new Database;
         $conn = $obj->connect();
-        // if($search != NULL){
-        //     if ( ($limit_start==0) && ($limit_end==0) )
-        //         $query = "SELECT $cols FROM `users` where ( username LIKE '%".str_replace(' ', '%', $search)."%'  or fullname LIKE '%".str_replace(' ', '%', $search)."%' or email LIKE '%".str_replace(' ', '%', $search)."%' ) and role!='admin' order by user_id ASC;";
-        //     else
-        //         $query = "SELECT $cols FROM `users` where ( username LIKE '%".str_replace(' ', '%', $search)."%'  or fullname LIKE '%".str_replace(' ', '%', $search)."%' or email LIKE '%".str_replace(' ', '%', $search)."%' ) and role!='admin' order by user_id ASC limit $limit_start,$limit_end; ";
-        // }else{
+        $search_query = '';
+        $cols = 'do.user_id, do.firstName , do.lastName , do.picture, do.phone , do.bloodtype , di.id as district, di.name as district_name ';
+        if($search != NULL){
+            foreach($search as $key=>$val)
+            {
+                if($val!='' || $val!=NULL)
+                    $search_query .= "$key LIKE '%".str_replace(' ', '%', $val)."%' or ";
+            }
+            
+            $search_query = substr($search_query , 0 ,-3);
             if ( ($limit_start==0) && ($limit_end==0) )
-                $query = "SELECT do.firstName , do.lastName , do.picture, do.phone , do.bloodtype , di.name as district FROM `donors` do inner join `districts` di on do.district = di.id order by do.user_id ASC ";
+                $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id where ( $search_query ) order by do.user_id ASC;";
             else
-                $query = "SELECT do.firstName , do.lastName , do.picture, do.phone , do.bloodtype , di.name as district FROM `donors` do inner join `districts` di on do.district = di.id order by user_id ASC limit $limit_start,$limit_end;";
-        // }
+                $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id where ( $search_query ) order by do.user_id ASC limit $limit_start,$limit_end; ";
+        }else{
+            if ( ($limit_start==0) && ($limit_end==0) )
+                $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id order by do.user_id ASC ";
+            else
+                $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id order by do.user_id ASC limit $limit_start,$limit_end;";
+        }
         $sql = $conn->query($query);
         $sql->execute();
         if ($sql->rowCount() > 0) {

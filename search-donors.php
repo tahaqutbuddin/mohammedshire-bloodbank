@@ -3,7 +3,7 @@ require_once './Includes/functions.php';
 
 $allDistricts = getAllDistrictsData(["id","name"]);
 $districts = "";
-$districts .= "<option value=''>Select District</option>";
+$districts .= "<option value='' selected>Select District</option>";
 foreach ($allDistricts as $dist)
 {
   $districts .= "<option value='".$dist["id"]."'>".ucfirst($dist["name"])."</option>";
@@ -26,81 +26,7 @@ foreach ($allDistricts as $dist)
 </head>
 <body>
 
-  <nav class="navbar navbar-expand-md navbar-light bg-danger pt-3 pb-3">
-    <div class="container">
-      <!-- navbar brand / title -->
-      <a class="navbar-brand" href="index.html">
-        <span class="text-white fw-bold">
-          <i class="bi bi-book-half"></i>
-          Soobe Blood-Hub
-        </span>
-      </a>
-      <!-- toggle button for mobile nav -->
-      <button class="navbar-toggler rounded border border-success" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="bi bi-list-nested display-4"></i></span>
-      </button>
-
-      <!-- navbar links -->
-      <div class="collapse navbar-collapse justify-content-end align-center" id="main-nav">
-        <ul class="navbar-nav ">
-          <li class="nav-item ">
-            <a class="nav-link text-white " href="index.html">HOME</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-white" href="search-donors.html">DONORS</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-white" href="#">CONTACT US</a>
-          </li>
-          <li class="nav-item m-1">
-            <a class="btn btn-danger border w-100" href="registration.html"> SIGN UP
-              <i class="bi bi-person-plus"></i>
-              </a>
-          </li>
-          <li class="nav-item  d-md-inline m-1">
-            <!-- <a class="btn btn-secondary" href="#pricing">buy nowss</a> -->
-            <a class="btn btn-success btn-rounded w-100" data-bs-toggle="modal" data-bs-target="#modalLoginForm">
-                Log In   <i class="bi bi-box-arrow-in-right"></i></a>
-          </li>
-          <!-- modal login form -->
-        <div class="modal fade" id="modalLoginForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header text-center">
-                        <h4 class="modal-title w-100 font-weight-bold">Sign in</h4>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body mx-3">
-                        <div class="md-form mb-5">
-                            <i class="fas fa-envelope prefix grey-text"></i>
-                            <input type="email" id="defaultForm-email" class="form-control validate">
-                            <label data-error="wrong" data-success="right" for="defaultForm-email">Your email</label>
-                        </div>
-        
-                        <div class="md-form mb-4">
-                            <i class="fas fa-lock prefix grey-text"></i>
-                            <input type="password" id="defaultForm-pass" class="form-control validate">
-                            <label data-error="wrong" data-success="right" for="defaultForm-pass">Your password</label>
-                        </div>
-        
-                    </div>
-                    <div class="modal-footer d-flex justify-content-center">
-                        <button class="btn btn-success w-100 d-block">
-                            <a class="nav-link text-white" href="#contact">Log In</a> </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- end  modal form -->
-          
-        </ul>
-      </div>
-    </div>
-  </nav>
-<!-- end nav bar  -->
+ <?php require './Includes/navbar.php';  ?>
 
 
     <!-- form start here -->
@@ -118,7 +44,7 @@ foreach ($allDistricts as $dist)
                       <!-- district select -->
                       <div class="col-md-4 m-1">
                         <div class="form-group">
-                          <select class="form-control py-3" id="">
+                          <select class="form-control py-3" id="districts">
                           <?= $districts; ?>
                         </select>
                         </div>
@@ -127,8 +53,8 @@ foreach ($allDistricts as $dist)
                           <!-- blood select -->
                       <div class="col-md-3 m-1">
                         <div class="form-group">
-                          <select class="form-control py-3" id="">
-                            <option selected>Select Blood Type</option>
+                          <select class="form-control py-3" id="bloodtype">
+                            <option selected value="">Select Blood Type</option>
                             <option value="A+">A+</option>
                             <option value="A-">A-</option>
                             <option value="B+">B+</option>
@@ -136,15 +62,14 @@ foreach ($allDistricts as $dist)
                             <option value="O+">O+</option>
                             <option value="O-">O-</option>
                             <option value="AB-">AB-</option>
-                            <option value="AB-">AB-</option>
+                            <option value="AB+">AB+</option>
                           </select>
                         </div>
                       </div>
 
                       <!-- button -->
                      <div class="col-md-4 m-1">
-                      <button class="btn btn-success w-100">
-                        <a href="" class="btn text-white">Search Donor</a>
+                      <button class="btn btn-success w-100" id="searchButton"type="button" class="btn text-white">Search Donor
                       </button>
                      </div>
 
@@ -182,12 +107,12 @@ foreach ($allDistricts as $dist)
 
     load_data(1);
 
-    function load_data(page, query = '')
+    function load_data(page, arr = {'empty':'1'})
     {
       $.ajax({
         url:"fetchAllDonors.php",
         method:"POST",
-        data:{page:page, query:query},
+        data:{page:page,query:arr},
         success:function(data)
         {
           $('#dynamic_content').html(data);
@@ -195,20 +120,24 @@ foreach ($allDistricts as $dist)
       });
     }
 
+    $(document).on('click',"#searchButton",function(){
+      var type = $("#bloodtype").val();
+      var dist = $("#districts").val();
+      var query = {bloodtype:type,district:dist};
+      load_data(1,query);
+    });
+
     $(document).on('click', '.page-link', function(){
       var page = $(this).data('page_number');
-      var query = $('#search_box').val();
+      var type = $("#bloodtype").val();
+      var dist = $("#districts").val();
+      var query = {bloodtype:type,district:dist};
       load_data(page, query);
     });
 
     // $(document).on('click','.launch-modal',function(){
     //  var val = $(this).siblings("input").val();
     //  $("#user-id").val(val);
-    // });
-
-    // $('#search_box').keyup(function(){
-    //   var query = $('#search_box').val();
-    //   load_data(1, query);
     // });
 
   });

@@ -1,7 +1,7 @@
 <?php
 require_once './Controllers/donorController.php';
 
-$limit = 10;
+$limit = 1;
 $page = 1;
 if($_POST['page'] > 1)
 {
@@ -13,11 +13,11 @@ else
   $start = 0;
 }
 
-if($_POST['query'] != '')
+if(!is_null($_POST["query"]))
 {
-  $search = htmlentities($_POST["query"]);
-}else { $search = NULL; }
-
+  if( (count($_POST['query']) > 0) && (!isset($_POST["query"]["empty"])) )
+  {$search = $_POST["query"];}else { $search = NULL; } 
+}
 
 $statement = getAllDonors( $search, 0 , 0);
 if($statement == NULL) 
@@ -51,7 +51,7 @@ if($total_data > 0)
           <h4>'.ucfirst($row["firstName"] .' '.$row["lastName"]).'</h4>
           <span>tel:'.$row["phone"].'</span>
           <h3>'.$row["bloodtype"].'</h3>
-          <h3>'.$row["district"].'</h3>
+          <h3>'.$row["district_name"].'</h3>
         </div>
       </div>
     </div>
