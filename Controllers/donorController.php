@@ -60,7 +60,6 @@ $components = explode('/', $path);
 $first_part = $components[count($components)-1];
 
 
-
 if($first_part == 'search-donors.php')
 {
     $obj = new Donor;

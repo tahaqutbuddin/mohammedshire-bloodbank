@@ -69,8 +69,9 @@ foreach ($allDistricts as $dist)
 
                       <!-- button -->
                      <div class="col-md-4 m-1">
-                      <button class="btn btn-success w-100" id="searchButton"type="button" class="btn text-white">Search Donor
+                      <button class="btn btn-success w-100" id="searchButton" type="button" class="btn text-white">Search Donor
                       </button>
+                      <button class="btn btn-success mt-1 w-100" id="resetAll" type="button" class="btn text-white">Reset All</button>
                      </div>
 
 
@@ -125,6 +126,10 @@ foreach ($allDistricts as $dist)
       var dist = $("#districts").val();
       var query = {bloodtype:type,district:dist};
       load_data(1,query);
+    });
+
+    $(document).on('click',"#resetAll",function(){
+      load_data(1);
     });
 
     $(document).on('click', '.page-link', function(){

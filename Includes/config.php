@@ -5,9 +5,9 @@ define("DB_PASSWORD","");
 define("DB_NAME" , "bloodbank");
 
 // define("DB_HOST" , "localhost");
-// define("DB_USER" , "u666115431_engmoha1717");
-// define("DB_PASSWORD","Mohammedshire20");
-// define("DB_NAME" , "u666115431_bilalthmane");
+// define("DB_USER" , "rajsoftw_testingDb");
+// define("DB_PASSWORD","qrBj(;2Bc~nE");
+// define("DB_NAME" , "rajsoftw_testing");
 
 
 ?>

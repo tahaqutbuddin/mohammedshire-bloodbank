@@ -78,19 +78,28 @@ class Donor
         $obj = new Database;
         $conn = $obj->connect();
         $search_query = '';
+        $flag = false;
         $cols = 'do.user_id, do.firstName , do.lastName , do.picture, do.phone , do.bloodtype , di.id as district, di.name as district_name ';
         if($search != NULL){
+            $search_query .= 'where (';
             foreach($search as $key=>$val)
             {
                 if($val!='' || $val!=NULL)
-                    $search_query .= "$key LIKE '%".str_replace(' ', '%', $val)."%' or ";
+                {
+                    $search_query .= "$key LIKE '%".str_replace(' ', '%', $val)."%' and ";
+                    $flag = true;
+                }
             }
-            
-            $search_query = substr($search_query , 0 ,-3);
+            if($flag)
+            {
+                $search_query = substr($search_query , 0 ,-4) . ')';
+            }else { $search_query = substr($search_query , 0 ,-7); }
+
+
             if ( ($limit_start==0) && ($limit_end==0) )
-                $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id where ( $search_query ) order by do.user_id ASC;";
+                $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id $search_query order by do.user_id ASC;";
             else
-                $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id where ( $search_query ) order by do.user_id ASC limit $limit_start,$limit_end; ";
+                $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id $search_query order by do.user_id ASC limit $limit_start,$limit_end; ";
         }else{
             if ( ($limit_start==0) && ($limit_end==0) )
                 $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id order by do.user_id ASC ";

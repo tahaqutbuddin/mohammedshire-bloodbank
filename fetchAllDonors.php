@@ -13,6 +13,7 @@ else
   $start = 0;
 }
 
+
 if(!is_null($_POST["query"]))
 {
   if( (count($_POST['query']) > 0) && (!isset($_POST["query"]["empty"])) )
