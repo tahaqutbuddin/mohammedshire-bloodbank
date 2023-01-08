@@ -129,14 +129,14 @@ if( (!isset($_SESSION["adminid"])) )
         <div class="modal-content">
           <form method="POST">
             <div class="modal-header">
-              <h5 class="modal-title" id="modalCenterTitle">Delete Client?</h5>
+              <h5 class="modal-title" id="modalCenterTitle">Delete Donor?</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
               <div class="row">
                 <div class="col mb-3">
-                  <input type="hidden" id="client-id" name="client_id">
-                  Are you sure you want to delete this Client details? 
+                  <input type="hidden" id="donor-id" name="donor_id">
+                  Are you sure you want to delete this Donor details? 
                 </div>
               </div>
             </div>
@@ -144,7 +144,7 @@ if( (!isset($_SESSION["adminid"])) )
               <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                 Close
               </button>
-              <button type="submit" name="deleteClient" class="btn btn-success">Yes, Confirm</button>
+              <button type="submit" name="deleteDonor" class="btn btn-success">Yes, Confirm</button>
             </div>
           </form>
         </div>
@@ -180,7 +180,7 @@ if( (!isset($_SESSION["adminid"])) )
 
     $(document).on('click','.launch-modal',function(){
      var val = $(this).siblings("input").val();
-     $("#client-id").val(val);
+     $("#donor-id").val(val);
     });
 
     $('#search_box').keyup(function(){

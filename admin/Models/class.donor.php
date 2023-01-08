@@ -54,6 +54,59 @@ class Donor
         }
     }
 
+    // public function updateClient($client_id , $arr = array())
+    // {
+    //     try{
+    //         $obj = new Database;
+    //         $conn  = $obj->connect();
+    //         $query = "UPDATE `clients` SET ";
+    //         foreach($arr as $key=>$val)
+    //         {
+    //             $query .= " `$key` = :$key ,";
+    //         }
+    //         $query = rtrim($query, ",");
+    //         $query .= 'where client_id = :cli';
+    //         $sql = $conn->prepare($query);
+    //         foreach($arr as $key=>$val)
+    //         {
+    //             if(is_int($val))
+    //             {
+    //                 $sql->bindParam(':'.$key,$arr[$key],PDO::PARAM_INT);
+    //             }else if(is_string($val))
+    //             {
+    //                 $sql->bindParam(':'.$key,$arr[$key],PDO::PARAM_STR);
+    //             }
+    //         }
+    //         $sql->bindParam(':cli',$client_id,PDO::PARAM_INT);
+    //         $res = $sql->execute();
+    //         if ($res) {
+    //             return true;
+    //         }else
+    //         {
+    //             return false;
+    //         }   
+    //     }catch(PDOException $ex)
+    //     {
+    //         echo "Error: ".$ex->getMessage();
+    //     }
+    // }
+
+    public function deleteDonor($id)
+    {
+        $obj = new Database;
+        $conn = $obj->connect();
+        $query = "DELETE from `donors` where user_id = :cli";
+        $sql = $conn->prepare($query);
+        $sql->bindParam(':cli',$id,PDO::PARAM_INT);
+        $result = $sql->execute();
+        if($result)
+        {
+            return true;
+        }
+        return false;
+    }
+
+
     public function getAllDonors($arr=array())
     {
         $conn = new Database;

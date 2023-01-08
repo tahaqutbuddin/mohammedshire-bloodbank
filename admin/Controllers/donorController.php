@@ -44,6 +44,29 @@ if(isset($_POST["insertDonor"]))
     }
     
 }
+else if(isset($_POST["deleteDonor"]))
+{
+    // if( (isset($_GET["record"])))
+    // {
+    //     $Obj = new Donor;
+    //     $client_id = base64_decode($_GET["record"]);
+    //     if($Obj->deleteDonor($client_id))
+    //     { 
+    //         unset($Obj);
+    //         header("Location: ./defaulters.php"); 
+    //     }
+    // }else 
+    if( (isset($_POST["donor_id"],$_POST["deleteDonor"])))
+    {
+        $Obj = new Donor;
+        $id = base64_decode($_POST["donor_id"]);
+        if($Obj->deleteDonor($id))
+        { 
+            unset($Obj);
+            header("Location: allDonors.php"); 
+        }
+    }
+}
 
 // if(isset($_GET["allDonors"]))
 // {

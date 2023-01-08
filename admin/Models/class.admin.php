@@ -4,19 +4,19 @@ class Login
 {
     private $conn;
     // Site login Function
-    public function login($email , $password)
+    public function login($username , $password)
     {
         $obj = new Database;
         $this->conn = $obj->connect();
         $username_query = $this->conn->prepare("SELECT * FROM `admins` WHERE `username` = :user and `is_active` = 1;");
-        $username_query->bindParam(':user' , $email,PDO::PARAM_STR);
+        $username_query->bindParam(':user' , $username,PDO::PARAM_STR);
         $username_query->execute();
         if($username_query->rowCount() > 0)
         {
             $result = $username_query->fetchAll(PDO::FETCH_ASSOC);
             $password = hash('sha512' , $result[0]["username"].'#$@cdh#$'.$password);
             $query = $this->conn->prepare("SELECT * FROM `admins` WHERE `username`= :user AND `password`= :pass and `is_active` = 1 ;");
-            $query->bindParam(':user' , $email,PDO::PARAM_STR);
+            $query->bindParam(':user' , $username,PDO::PARAM_STR);
             $query->bindParam(':pass' , $password,PDO::PARAM_STR);
             $query->execute();
             if($query->rowCount() > 0)
@@ -30,6 +30,7 @@ class Login
                         setcookie('crypt', $crypt , strtotime('+21 days'), '/');    
                         $obj->closeConnection();
                         $_SESSION["adminid"] = $row["id"];
+                        $_SESSION["username"] = $username;
                         return true;
                     } 
                 }
