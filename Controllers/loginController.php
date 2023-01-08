@@ -2,7 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-require_once './Models/class.login.php';
+require_once __DIR__.'/../Models/class.login.php';
 
 if (isset($_POST["loginUser"])) {
     $email = $_POST["email"];

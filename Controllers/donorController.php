@@ -2,9 +2,9 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-require_once './Includes/functions.php';
-require_once './Models/class.donor.php';
-require_once './Models/class.login.php';
+require __DIR__ .'/../Includes/functions.php';
+require __DIR__ .'/../Models/class.donor.php';
+require __DIR__ .'/../Models/class.login.php';
 
 // For Adding new users
 if(isset($_POST["insertDonor"]))

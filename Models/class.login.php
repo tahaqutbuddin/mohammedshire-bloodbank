@@ -1,21 +1,10 @@
 <?php
-
-use PHPMailer\PHPMailer\PHPMailer;
-require 'mail/vendor/phpmailer/phpmailer/src/Exception.php';
-require 'mail/vendor/phpmailer/phpmailer/src/PHPMailer.php';
-require 'mail/vendor/phpmailer/phpmailer/src/SMTP.php';
 require_once 'class.database.php';
 
 
 class Login 
 {
     private $conn;
-
-    public function __construct()
-    {
-        $this->username = $this->password = $this->fullname  = $this->password =  NULL;
-    }
-
     // Site login Function
     public function login($email , $password)
     {
@@ -78,55 +67,6 @@ class Login
         if($sql->rowCount() > 0 ) { return true;}else { return false; }
     }
 
-
-    public function forgotPassword($email,$username)
-    {
-        $obj = new Database;
-        $this->conn = $obj->connect();
-        $query1 = $this->conn->prepare("SELECT * FROM `users` WHERE `email` = :em AND `username` = :user  LIMIT 1");
-        $query1->bindParam(":em",$email,PDO::PARAM_STR);
-        $query1->bindParam(":user",$username,PDO::PARAM_STR);
-        $query1->execute();
-        if($query1->rowCount() > 0)
-        {
-            $to = $email;
-            $result = $query1->fetchAll(PDO::FETCH_ASSOC);
-            $fullname =  ucfirst($result[0]["fullname"]);
-            $subject = "Account Recovery";
-            $hash = hash("SHA512","Taajbook2153".$email.$username."Taajbook2153");
-            $hashed_ip = hash("SHA512",$_SERVER['REMOTE_ADDR']);
-            $link = $_SERVER["SERVER_NAME"] . "/changepassword.php?authorize=$hash&record=".base64_encode($email)."&geo=".$hashed_ip;
-            $msg = "<div>You are receiving this mail because you requested for Forget Password. <br/> Here is the link that you can visit to Change your password <br/><br/> $link .</div><br/><br/>Thank You for Using our Services<br/><br/>Yours Truly,<br/>Taajbook.com";
-            if($this->send_mail($to,$fullname,$subject,$msg)===true)
-            {
-                return 1;
-            }
-        } 
-    }
-
-    public function changePassword($email, $pass)
-    {
-        $obj = new Database;
-        $this->conn = $obj->connect();
-        $query1 = $this->conn->prepare("SELECT username FROM `users` WHERE `email` = :em  LIMIT 1");
-        $query1->bindParam(":em",$email,PDO::PARAM_STR);
-        $query1->execute();
-        if($query1->rowCount() > 0)
-        {
-            $username = NULL;
-            $result = $query1->fetchAll(PDO::FETCH_ASSOC);
-            $username =  $result[0]["username"];
-            $hash_password = hash('sha512' , $username.'#$@cdh#$'.$pass);
-            $query = "UPDATE `users` SET `password` = :p where `username` = :u and `email`=:em ";
-            $sql = $this->conn->prepare($query); 
-            $sql->bindParam(':p' , $hash_password,PDO::PARAM_STR);
-            $sql->bindParam(':u' , $username,PDO::PARAM_STR);
-            $sql->bindParam(':em' , $email,PDO::PARAM_STR);
-            $sql->execute();
-            if($sql->rowCount() > 0 ) { return true;}else { return false; }
-        }
-    }
-
     private function AES($action, $string) {
         $output = false;
         $encrypt_method = "AES-256-CBC";
@@ -142,35 +82,6 @@ class Login
         }
         return $output;
     }
-
-    private function send_mail($to,$fullname,$sub,$body)
-    {
-        $mail = new PHPMailer();
-        $mail->IsSMTP();
-        $mail->Mailer = "smtp";
-        $mail->SMTPAuth   = TRUE;
-        $mail->SMTPSecure = "tls";
-        $mail->Port       = 587;
-        $mail->Host       = "smtp.titan.email";
-        $mail->Username   = "support@taajbook.com";
-        $mail->Password   = "IweiSAdmBS";
-        
-        $mail->IsHTML(true);
-        $mail->AddAddress($to, $fullname);
-        $mail->SetFrom("support@taajbook.com", "Taajbook Support");
-        $mail->Subject = $sub;
-        $content = $body;
-
-
-        $mail->MsgHTML($content); 
-        if(!$mail->Send()) {
-          echo "Error while sending Email.";
-          var_dump($mail);
-        } else {
-          echo "Email sent successfully";
-        }
-    }
-    
 }
 
 
