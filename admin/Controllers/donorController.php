@@ -31,12 +31,12 @@ if(isset($_POST["insertDonor"]))
         if(is_int($result))
         {
             unset($insertObj);
-            $message = '<div class="alert alert-danger alert-dismissible>This user already exists.</div>';
+            $message = '<div class="alert alert-danger alert-dismissible>This donor already exists.</div>';
         }else
         {
             unset($insertObj);
             unset($_POST);
-            header("Location: ./index.php");
+            header("Location: ./allDonors.php");
         }
     }else
     {
@@ -68,13 +68,33 @@ else if(isset($_POST["deleteDonor"]))
     }
 }
 
-// if(isset($_GET["allDonors"]))
-// {
-//     $user = new Donor;
-//     echo json_encode($user->getAllDonors(["firstName","lastName","phone","picture","bloodtype"]) );
-// }
 
+//for saving edited info of donor
+if(isset($_POST["saveDonor"]))
+{
+    $message = '';
+    $id = base64_decode($_GET["record"]);
+    unset($_POST["saveDonor"]);
+    foreach ($_POST as $key => $val)
+    {
+        if(strlen($val)>0)
+            $_POST[$key] = htmlentities($val);
+    }
+    $updateObj = new Donor;
+    if(strlen($_FILES["image"]['tmp_name']) > 0)
+    {
+        $imgPath = savePicture($_FILES);
+        $updateObj->updateDonorImage($id,$imgPath);
+    }
 
+    if(!$updateObj->updateDonor($id , $_POST))
+    {
+        $message = '<div class="alert alert-danger alert-dismissible" role="alert">Unable to update Data</div><br/>';
+    }
+    unset($updateObj);
+    unset($_POST);
+    // header("Location:allDonors.php");
+}
 
 
 $directoryURI = $_SERVER['REQUEST_URI'];
@@ -96,6 +116,34 @@ else if($first_part == 'allDonors.php')
     $totalDonors = $result->rowCount();
     unset($userObj);
 }
+else if($first_part == "addDonor.php")
+{
+    $Obj = new Donor;
+    $result = $Obj->getLatestClientID();
+    if( !$result ) 
+        $id = "10001";
+    else{
+        $id =  (int) ++$result;
+    }
+    unset($Obj);
+}
+else if($first_part == 'editDonor.php')
+{
+    $Obj = new Donor;
+    $donor_id = base64_decode($_GET["record"]);
+    $firstName = $Obj->getValueOfDonor("firstName",$donor_id);
+    $lastName = $Obj->getValueOfDonor("lastName",$donor_id);
+    $email = $Obj->getValueOfDonor("email",$donor_id);
+    $gender = $Obj->getValueOfDonor("gender",$donor_id);
+    $phone = $Obj->getValueOfDonor("phone",$donor_id);
+    $picture = $Obj->getValueOfDonor("picture",$donor_id);
+    $bloodtype = $Obj->getValueOfDonor("bloodtype",$donor_id);
+    $district_val = $Obj->getValueOfDonor("district",$donor_id);
+    $status = $Obj->getValueOfDonor("is_active",$donor_id);  
+    unset($Obj);
+}
+
+
 
 function getAllDonors( $search, $limit_start , $limit_end)
 {

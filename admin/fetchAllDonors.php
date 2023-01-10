@@ -63,7 +63,7 @@ else{
       $key = hash("SHA512","#$%^&".$row["firstName"]."@#$%^");    // gen unique key for URL
 
       // Edit and Delete buttons
-      $button .= '<a href="editUser.php?code='.$key.'&record='.$id.'"  class="btn rounded-pill btn-success mb-1 btn-sm">Edit</a><br/>';
+      $button .= '<a href="editDonor.php?code='.$key.'&record='.$id.'"  class="btn rounded-pill btn-success mb-1 btn-sm">Edit</a><br/>';
       $button .= '<button type="button" name="deleteClient" class="btn rounded-pill btn-danger mb-1 btn-sm launch-modal" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button><br/>';      
 
       $output .= '

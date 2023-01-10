@@ -12,9 +12,37 @@ if(!isset($_GET["record"] , $_GET["code"]))
 }
 require_once __DIR__.'/Controllers/donorController.php'; 
 
-if( (!isset($_SESSION["userid"])) && (!isset($_SESSION["adminid"])) )
+if(  (!isset($_SESSION["adminid"])) )
 {
-  header("Location:./login.php");
+  header("Location:login.php");
+}
+
+$allDistricts = getAllDistrictsData(["id","name"]);
+$districts = "";
+$districts .= "<option value='' selected>Select District</option>";
+foreach ($allDistricts as $dist)
+{
+  if($district_val == $dist["id"])
+  {
+    $districts .= "<option value='".$dist["id"]."' selected>".ucfirst($dist["name"])."</option>";
+  }else
+  {
+    $districts .= "<option value='".$dist["id"]."'>".ucfirst($dist["name"])."</option>";
+  }
+}
+
+
+$bloodtypes = '<option selected value="">Select Blood Type</option>';
+$arr = array('A+','A-','B+','B-','O+','O-','AB-','AB+');
+for($i=0;$i < count($arr);$i++)
+{
+  if($arr[$i] == $bloodtype)
+  {
+    $bloodtypes .= '<option value="'.$arr[$i].'" selected>'.$arr[$i].'</option>';
+  }else
+  {
+    $bloodtypes .= '<option value="'.$arr[$i].'">'.$arr[$i].'</option>';
+  }
 }
 ?>
 
@@ -35,7 +63,7 @@ if( (!isset($_SESSION["userid"])) && (!isset($_SESSION["adminid"])) )
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>Edit Client Details - Cliental List</title>
+    <title>Edit Donor - Donors List</title>
 
     <meta name="description" content="" />
 
@@ -67,7 +95,7 @@ if( (!isset($_SESSION["userid"])) && (!isset($_SESSION["adminid"])) )
               <!-- Search -->
               <div class="navbar-nav align-items-center">
                 <div class="nav-item d-flex align-items-center">
-                  
+                 
                 </div>
               </div>
               <!-- /Search -->
@@ -91,23 +119,24 @@ if( (!isset($_SESSION["userid"])) && (!isset($_SESSION["adminid"])) )
 
           <!-- Content wrapper -->
           <div class="content-wrapper">
-            
             <!-- Content -->
+
             <div class="container-xxl flex-grow-1 container-p-y">
-                        
+              
               <div class="row">
 
                 <!-- Form controls -->
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
                   <div class="card mb-4">
-                    <h5 class="card-header bg-primary text-white">Edit Client</h5>
+                    <h5 class="card-header bg-primary text-white">Edit Donor</h5>
+                    
+                    
                     <div class="card-body">
-                    <br/>
-                    <a href="defaulters.php" class="btn btn-md btn-outline-warning">Go Back</a>
-                    <form method="POST">
-                        <br/>
-
+                      <br/>
+                      <a href="allDonors.php" class="btn btn-lg btn-outline-success">Go Back</a>
+                      
+                    <form method="POST" enctype="multipart/form-data">
                       <?php 
                       if(isset($message) && (strlen($message)>0))
                       {
@@ -115,36 +144,108 @@ if( (!isset($_SESSION["userid"])) && (!isset($_SESSION["adminid"])) )
                       }
                       ?>
 
-                      <div class="form-floating">
-                        <input type="text" class="form-control" name="code" id="floatingInput" value="<?= $clientCode ?>" aria-describedby="floatingInputHelp" readonly>
-                        <label for="floatingInput">Client Code</label>
+                      <div class="row justify-content-center">
+                        <div class="col-6">
+                          <div>
+                            <label for="defaultFormControlInput" class="form-label">Donor Id</label>
+                            <input type="text" value="<?= $donor_id; ?>" class="form-control" id="defaultFormControlInput" aria-describedby="defaultFormControlHelp" readonly>
+                          </div>
+                        </div>
                       </div>
                       <br/>
+                        
 
-                      <div class="form-floating">
-                        <input type="text" class="form-control" name="name" id="floatingInput" value="<?= $clientName ?>" aria-describedby="floatingInputHelp">
-                        <label for="floatingInput">Client Name</label>
+                      <div class="row">
+                        <div class="col-6">
+                          <div>
+                            <label for="defaultFormControlInput" class="form-label">First Name</label>
+                            <input type="text" name="firstName" value="<?= $firstName ?>" class="form-control" id="defaultFormControlInput" placeholder="John Doe" aria-describedby="defaultFormControlHelp" required>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div>
+                            <label for="defaultFormControlInput" class="form-label">Last Name</label>
+                            <input type="text" name="lastName" value="<?= $lastName ?>" class="form-control" id="defaultFormControlInput" placeholder="John Doe" aria-describedby="defaultFormControlHelp" required>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <br/>
+                      <div class="row">
+                        <div class="col-12">
+                          <div>
+                            <label for="exampleFormControlInput1" class="form-label">Email address</label>
+                            <input type="email" name="email" value="<?= $email ?>" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com" required>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <br/>
+
+                      <div class="row">
+                        <div class="col-6">
+                          <div>
+                            <label for="exampleFormControlInput1" class="form-label">Contact No</label>
+                            <input type="text" name="phone" value="<?= $phone ?>" class="form-control" id="exampleFormControlInput1" placeholder="e.g +92331879608" required>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="col-md">
+                            <label for="exampleFormControlInput1" class="form-label">Gender</label><br/>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="gender" id="inlineRadio1" value="male" <?php if($gender=="male"){echo 'checked';} ?>>
+                              <label class="form-check-label" for="inlineRadio1">Male</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="gender" id="inlineRadio2" value="female" <?php if($gender=="female"){echo 'checked';} ?>>
+                              <label class="form-check-label" for="inlineRadio2">Female</label>
+                            </div>
+                          </div>
+                        </div>
                       </div>
 
                       <br/>
 
-                      <div class="form-floating">
-                        <input type="number" class="form-control" name="total" id="floatingInput1" step="any" value="<?= $total ?>" aria-describedby="floatingInputHelp1">
-                        <label for="floatingInput1">Total Amount to Transfer</label>
+                      <div class="row">
+                        <div class="col-6">
+                          <div>
+                            <label for="exampleFormControlSelect1" class="form-label">Districts</label>
+                            <select class="form-select" name="district" id="exampleFormControlSelect1" aria-label="Default select example" required>
+                              <?= $districts; ?>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div>
+                            <label for="exampleFormControlSelect1" class="form-label">Blood Type</label>
+                            <select class="form-select" name="bloodtype" id="exampleFormControlSelect1" aria-label="Default select example" required>
+                                <?= $bloodtypes; ?>
+                            </select>
+                          </div>
+                        </div>
                       </div>
 
                       <br/>
 
-                      <div class="form-floating">
-                        <input type="number" class="form-control" name="amount_given" id="floatingInput2" step="any" value="<?= $amount ?>" aria-describedby="floatingInputHelp2">
-                        <label for="floatingInput2">Amount Given by Client</label>
+                      <div class="row">
+                        <label for="formFile" class="form-label">Profile Picture</label>
+                        <div class="col-6">
+                          <img src='<?= $picture ?>' style="max-width:100%" id="previewImg" />
+                        </div>
+                        <div class="col-6">
+                          <div>
+                            <input class="form-control" name="image" type="file" id="" onchange="previewFile(this);" >
+                          </div>
+                          <div>
+                            <button type="button" id="resetImage" class="btn btn-sm btn-danger mt-2">Reset Image</button>
+                          </div>                        
+                        </div>
                       </div>
-
+                      
+        
                       <div class="row mt-3">
                         <div class="d-grid gap-2 col-lg-6 mx-auto">
-                          <button type="submit" name="saveClient" class="btn btn-primary btn-lg" >Save Details</button>
-                          <button class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Client?</button>
-                        
+                          <button type="submit" name="saveDonor" class="btn btn-primary btn-lg" >Save Details</button>
                         </div>
                       </div>
 
@@ -159,32 +260,6 @@ if( (!isset($_SESSION["userid"])) && (!isset($_SESSION["adminid"])) )
             </div>
             <!-- / Content -->
 
-            <div class="modal fade" id="deleteModal" tabindex="-1" style="display: none;" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                  <form method="POST">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="modalCenterTitle">Delete Client?</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                      <div class="row">
-                        <div class="col mb-3">
-                          Are you sure you want to delete this Client details? 
-                        </div>
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        Close
-                      </button>
-                      <button type="submit" name="deleteClient" class="btn btn-success">Yes, Confirm</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-
 
             <div class="content-backdrop fade"></div>
           </div>
@@ -196,16 +271,26 @@ if( (!isset($_SESSION["userid"])) && (!isset($_SESSION["adminid"])) )
       <!-- Overlay -->
       <div class="layout-overlay layout-menu-toggle"></div>
     </div>
-
-
     <!-- / Layout wrapper -->
     <?php require_once './Includes/footerFiles.php'; ?>
-
-
- 
+    <script>
+        function previewFile(input){
+            var file = $("input[type=file]").get(0).files[0];
+    
+            if(file){
+                var reader = new FileReader();
+    
+                reader.onload = function(){
+                    $("#previewImg").attr("src", reader.result);
+                }
+    
+                reader.readAsDataURL(file);
+            }
+        }
+        $(document).on('click',"#resetImage",function(){
+          location.reload();
+        });
+    </script>
 
   </body>
 </html>
-
-
-  

@@ -1,4 +1,7 @@
 <?php
+
+use function PHPSTORM_META\elementType;
+
 require_once 'class.database.php';
 class Donor
 {
@@ -54,43 +57,6 @@ class Donor
         }
     }
 
-    // public function updateClient($client_id , $arr = array())
-    // {
-    //     try{
-    //         $obj = new Database;
-    //         $conn  = $obj->connect();
-    //         $query = "UPDATE `clients` SET ";
-    //         foreach($arr as $key=>$val)
-    //         {
-    //             $query .= " `$key` = :$key ,";
-    //         }
-    //         $query = rtrim($query, ",");
-    //         $query .= 'where client_id = :cli';
-    //         $sql = $conn->prepare($query);
-    //         foreach($arr as $key=>$val)
-    //         {
-    //             if(is_int($val))
-    //             {
-    //                 $sql->bindParam(':'.$key,$arr[$key],PDO::PARAM_INT);
-    //             }else if(is_string($val))
-    //             {
-    //                 $sql->bindParam(':'.$key,$arr[$key],PDO::PARAM_STR);
-    //             }
-    //         }
-    //         $sql->bindParam(':cli',$client_id,PDO::PARAM_INT);
-    //         $res = $sql->execute();
-    //         if ($res) {
-    //             return true;
-    //         }else
-    //         {
-    //             return false;
-    //         }   
-    //     }catch(PDOException $ex)
-    //     {
-    //         echo "Error: ".$ex->getMessage();
-    //     }
-    // }
-
     public function deleteDonor($id)
     {
         $obj = new Database;
@@ -106,6 +72,23 @@ class Donor
         return false;
     }
 
+    public function getLatestClientID()
+    {
+        $obj = new Database;
+        $conn = $obj->connect();
+        $query = "SELECT user_id FROM `donors` order by user_id desc limit 1;";
+        $sql = $conn->query($query);
+        $sql->execute();
+        if ($sql->rowCount() > 0) {
+            $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+            foreach($result as $row)
+            {
+                $obj->closeConnection();
+                return $row["user_id"];
+            }
+        }
+        return false;
+    }
 
     public function getAllDonors($arr=array())
     {
@@ -165,6 +148,112 @@ class Donor
             $result = $sql;
             $obj->closeConnection();
             return $result;
+        }
+    }
+
+    public function getValueOfDonor($col,$id)
+    {
+        $obj = new Database;
+        $conn = $obj->connect();
+        $query = "SELECT $col FROM `donors` do inner join districts di on do.user_id=di.id where do.user_id = :don";
+        $sql = $conn->prepare($query);
+        $sql->bindParam(':don',$id,PDO::PARAM_INT);
+        $sql->execute();
+        if ($sql->rowCount() > 0) {
+            $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+            foreach($result as $row)
+            {
+                $obj->closeConnection();
+                return $row[$col];
+            }
+        }
+    }
+
+    public function updateDonor($id , $arr = array())
+    {
+        try{
+            $obj = new Database;
+            $conn  = $obj->connect();
+            $query = "UPDATE `donors` SET ";
+            foreach($arr as $key=>$val)
+            {
+                $query .= " `$key` = :$key ,";
+            }
+            $query = rtrim($query, ",");
+            $query .= 'where user_id = :cli';
+            $sql = $conn->prepare($query);
+            foreach($arr as $key=>$val)
+            {
+                if(is_int($val))
+                {
+                    $sql->bindParam(':'.$key,$arr[$key],PDO::PARAM_INT);
+                }else if(is_string($val))
+                {
+                    $sql->bindParam(':'.$key,$arr[$key],PDO::PARAM_STR);
+                }
+            }
+            $sql->bindParam(':cli',$id,PDO::PARAM_INT);
+            $res = $sql->execute();
+            if ($res) {
+                return true;
+            }else
+            {
+                return false;
+            }   
+        }catch(PDOException $ex)
+        {
+            echo "Error: ".$ex->getMessage();
+        }
+    }
+
+    public function updateDonorImage($id , $path)
+    {
+        if($this->deleteOldImage($id))
+        {
+            $obj = new Database;
+            $conn  = $obj->connect();
+            $query = "UPDATE donors SET picture = :pth where user_id = :uid";
+            $sql = $conn->prepare($query);
+            $sql->bindParam(':pth',$path,PDO::PARAM_STR);
+            $sql->bindParam(':uid',$id,PDO::PARAM_INT);
+            $res = $sql->execute();
+            if($res)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public function deleteOldImage($id)
+    {
+        $obj = new Database;
+        $conn  = $obj->connect();
+        $query = "SELECT picture from donors where user_id = :uid";
+        $sql = $conn->prepare($query);
+        $sql->bindParam(':uid',$id,PDO::PARAM_INT);
+        $sql->execute();
+        if($sql->rowCount() > 0)
+        {
+            $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+            $filename = $result[0]["picture"];
+            if( ($filename != NULL) && (strlen($filename) > 0) )
+            {
+                if (file_exists($filename)) {
+                unlink($filename);
+                echo 'File '.$filename.' has been deleted';
+                return true;
+                } else {
+                echo 'Could not delete '.$filename.', file does not exist';
+                return true;
+                }
+            }else
+            {
+                return true;
+            }            
+        }else
+        {
+            return false;
         }
     }
 }

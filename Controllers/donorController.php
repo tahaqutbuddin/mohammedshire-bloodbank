@@ -31,12 +31,12 @@ if(isset($_POST["insertDonor"]))
         if(is_int($result))
         {
             unset($insertObj);
-            $message = '<div class="alert alert-danger alert-dismissible>This user already exists.</div>';
+            $message = '<div class="alert alert-danger alert-dismissible>This donor already exists.</div>';
         }else
         {
             unset($insertObj);
             unset($_POST);
-            header("Location: ./index.php");
+            header("Location: index.php");
         }
     }else
     {

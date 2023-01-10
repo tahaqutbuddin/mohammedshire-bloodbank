@@ -1,8 +1,18 @@
 <?php 
 require_once __DIR__.'/Controllers/donorController.php'; 
-if( (!isset($_SESSION["userid"])) && (!isset($_SESSION["adminid"])) )
+
+
+if( (!isset($_SESSION["adminid"])) )
 {
-  header("Location:./login.php");
+  header("Location: login.php");
+}
+
+$allDistricts = getAllDistrictsData(["id","name"]);
+$districts = "";
+$districts .= "<option value='' selected>Select District</option>";
+foreach ($allDistricts as $dist)
+{
+  $districts .= "<option value='".$dist["id"]."'>".ucfirst($dist["name"])."</option>";
 }
 ?>
 
@@ -23,7 +33,7 @@ if( (!isset($_SESSION["userid"])) && (!isset($_SESSION["adminid"])) )
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>Add New Client - Cliental List</title>
+    <title>Add New Donor - Donors List</title>
 
     <meta name="description" content="" />
 
@@ -89,9 +99,9 @@ if( (!isset($_SESSION["userid"])) && (!isset($_SESSION["adminid"])) )
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
                   <div class="card mb-4">
-                    <h5 class="card-header bg-primary text-white">Add New Client</h5>
+                    <h5 class="card-header bg-primary text-white">Add New Donor</h5>
                     <div class="card-body">
-                    <form method="POST">
+                    <form method="POST" enctype="multipart/form-data">
                         <br/>
 
                       <?php 
@@ -101,41 +111,121 @@ if( (!isset($_SESSION["userid"])) && (!isset($_SESSION["adminid"])) )
                       }
                       ?>
 
-                      <div class="form-floating">
-                        <input type="text" class="form-control" name="code" id="floatingInput" value="<?= $clientCode ?>"  readonly>
-                        <label for="floatingInput">Client Code</label>
+                      <div class="row justify-content-center">
+                        <div class="col-6">
+                          <div>
+                            <label for="defaultFormControlInput" class="form-label">Donor Id</label>
+                            <input type="text" value="<?= $id; ?>" class="form-control" id="defaultFormControlInput" aria-describedby="defaultFormControlHelp" readonly>
+                          </div>
+                        </div>
                       </div>
                       <br/>
+                        
 
-                      <div class="form-floating">
-                        <input type="text" class="form-control" name="name" id="floatingInput" placeholder="e.g Martin Luther"  required>
-                        <label for="floatingInput">Client Name</label>
+                      <div class="row">
+                        <div class="col-6">
+                          <div>
+                            <label for="defaultFormControlInput" class="form-label">First Name</label>
+                            <input type="text" name="firstName" class="form-control" id="defaultFormControlInput" placeholder="John Doe" aria-describedby="defaultFormControlHelp" required>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div>
+                            <label for="defaultFormControlInput" class="form-label">Last Name</label>
+                            <input type="text" name="lastName" class="form-control" id="defaultFormControlInput" placeholder="John Doe" aria-describedby="defaultFormControlHelp" required>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <br/>
+                      <div class="row">
+                        <div class="col-12">
+                          <div>
+                            <label for="exampleFormControlInput1" class="form-label">Email address</label>
+                            <input type="email" name="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com" required>
+                          </div>
+                        </div>
+                      </div>
+
+                      <br/>
+                      <div class="row">
+                        <div class="col-6">
+                          <div>
+                            <label for="exampleFormControlInput1" class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control" id="exampleFormControlInput1" placeholder="********" required>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div>
+                            <label for="exampleFormControlInput1" class="form-label">Confirm Password</label>
+                            <input type="password" name="cpassword" class="form-control" id="exampleFormControlInput1" placeholder="********" required>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <br/>
+
+                      <div class="row">
+                        <div class="col-6">
+                          <div>
+                            <label for="exampleFormControlInput1" class="form-label">Contact No</label>
+                            <input type="text" name="phone" class="form-control" id="exampleFormControlInput1" placeholder="e.g +92331879608" required>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="col-md">
+                            <label for="exampleFormControlInput1" class="form-label">Gender</label><br/>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="gender" id="inlineRadio1" value="male" checked>
+                              <label class="form-check-label" for="inlineRadio1">Male</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="gender" id="inlineRadio2" value="female">
+                              <label class="form-check-label" for="inlineRadio2">Female</label>
+                            </div>
+                          </div>
+                        </div>
                       </div>
 
                       <br/>
 
-                      <div class="form-floating">
-                        <input type="text" class="form-control" name="phone" maxlegnth="17" id="floatingInput1" placeholder="e.g +923348035145" required>
-                        <label for="floatingInput1">Client Contact No</label>
+                      <div class="row">
+                        <div class="col-6">
+                          <div>
+                            <label for="exampleFormControlSelect1" class="form-label">Districts</label>
+                            <select class="form-select" name="district" id="exampleFormControlSelect1" aria-label="Default select example" required>
+                              <?= $districts; ?>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div>
+                            <label for="exampleFormControlSelect1" class="form-label">Blood Type</label>
+                            <select class="form-select" name="bloodtype" id="exampleFormControlSelect1" aria-label="Default select example" required>
+                              <option selected value="">Select Blood Type</option>
+                              <option value="A+">A+</option>
+                              <option value="A-">A-</option>
+                              <option value="B+">B+</option>
+                              <option value="B-">B-</option>
+                              <option value="O+">O+</option>
+                              <option value="O-">O-</option>
+                              <option value="AB-">AB-</option>
+                              <option value="AB+">AB+</option>
+                            </select>
+                          </div>
+                        </div>
                       </div>
 
                       <br/>
 
-                      <div class="form-floating">
-                        <input type="number" class="form-control" step="any" name="total" id="floatingInput2" placeholder="e.g 100" required>
-                        <label for="floatingInput2">Total Amount to Transfer</label>
+                      <div>
+                        <label for="formFile" class="form-label">Profile Picture</label>
+                        <input class="form-control" name="image" type="file" id="formFile" required>
                       </div>
-
-                      <br/>
-
-                      <div class="form-floating">
-                        <input type="number" class="form-control" step="any" name="amount_given" id="floatingInput3" placeholder="e.g 80" required>
-                        <label for="floatingInput3">Amount Given by Client</label>
-                      </div>
-
+        
                       <div class="row mt-3">
                         <div class="d-grid gap-2 col-lg-6 mx-auto">
-                          <button type="submit" name="addClient" class="btn btn-primary btn-lg" type="button">Store Client Details</button>
+                          <button type="submit" name="insertDonor" class="btn btn-primary btn-lg" >Store Details</button>
                         </div>
                       </div>
 

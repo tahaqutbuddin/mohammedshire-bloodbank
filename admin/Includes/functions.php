@@ -46,8 +46,6 @@ function savePicture($arr)
     if (!in_array($mimeType, $allowedMimeTypes)) 
        throw new Exception('Only JPG, JPEG, PNG and GIFs are allowed');
 
-
-
     $banner = $image['name']; 
     $expbanner = explode('.',$banner);
     $bannerexptype = $expbanner[1];
@@ -55,7 +53,7 @@ function savePicture($arr)
     $rand = rand(10000,99999);
     $encname = $date.$rand;
     $bannername = md5($encname).'.'.$bannerexptype;
-    $bannerpath="./assets/img/profilePictures/".$bannername;
+    $bannerpath="../assets/img/profilePictures/".$bannername;
     if(move_uploaded_file($_FILES["image"]["tmp_name"],$bannerpath))
     {
         return $bannerpath;
