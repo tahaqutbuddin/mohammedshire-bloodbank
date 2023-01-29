@@ -1,2 +1,1 @@
-profile Image issue
-Active, disabled status
+profile Image path issue throughout the system

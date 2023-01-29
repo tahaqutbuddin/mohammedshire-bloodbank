@@ -10,14 +10,14 @@ class Login
     {
         $obj = new Database;
         $this->conn = $obj->connect();
-        $username_query = $this->conn->prepare("SELECT * FROM `users` WHERE `email` = :user and `is_active` = 1;");
+        $username_query = $this->conn->prepare("SELECT * FROM `donors` WHERE `email` = :user and `is_active` = 1;");
         $username_query->bindParam(':user' , $email,PDO::PARAM_STR);
         $username_query->execute();
         if($username_query->rowCount() > 0)
         {
             $result = $username_query->fetchAll(PDO::FETCH_ASSOC);
             $password = hash('sha512' , $result[0]["firstName"].'#$@cdh#$'.$password);
-            $query = $this->conn->prepare("SELECT * FROM `users` WHERE `email`= :user AND `password`= :pass and `is_active` = 1 ;");
+            $query = $this->conn->prepare("SELECT * FROM `donors` WHERE `email`= :user AND `password`= :pass and `is_active` = 1 ;");
             $query->bindParam(':user' , $email,PDO::PARAM_STR);
             $query->bindParam(':pass' , $password,PDO::PARAM_STR);
             $query->execute();
@@ -60,7 +60,7 @@ class Login
 
     public function updateLoginTime($user_id)
     {
-        $query = "UPDATE `users` SET `last_login` = NOW() where `user_id` = :id and `is_active`=1";
+        $query = "UPDATE `donors` SET `last_login` = NOW() where `user_id` = :id and `is_active`=1";
         $sql = $this->conn->prepare($query); 
         $sql->bindParam(':id' , $user_id,PDO::PARAM_INT);
         $sql->execute();

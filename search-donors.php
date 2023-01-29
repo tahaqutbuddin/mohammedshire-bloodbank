@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once './Includes/functions.php';
 
 $allDistricts = getAllDistrictsData(["id","name"]);
@@ -8,9 +9,6 @@ foreach ($allDistricts as $dist)
 {
   $districts .= "<option value='".$dist["id"]."'>".ucfirst($dist["name"])."</option>";
 }
-
-
-
 
 ?>
 <!DOCTYPE html>

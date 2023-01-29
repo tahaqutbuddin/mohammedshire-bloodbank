@@ -1,7 +1,7 @@
 <?php
 require_once './Controllers/donorController.php';
 
-$limit = 1;
+$limit = 5;
 $page = 1;
 if($_POST['page'] > 1)
 {
@@ -41,11 +41,12 @@ if($total_data > 0)
 {
   foreach($result as $row)
   {
+    $pic = substr($row["picture"], 1);     // for removing single . from path just to make it relative
     $output .= '
     <div class="col-md-3 m-1 p-2 border border-secondary rounded">
       <div class="member align-start d-flex p-1 m-1">
         <div class="m-1" >
-          <img src="'.$row["picture"].'" style="max-width:100%" alt="">
+          <img src="'.$pic.'" style="max-width:100%" alt="">
         </div>
 
         <div class="info">

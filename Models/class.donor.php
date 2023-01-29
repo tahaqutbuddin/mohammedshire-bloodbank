@@ -97,14 +97,14 @@ class Donor
 
 
             if ( ($limit_start==0) && ($limit_end==0) )
-                $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id $search_query order by do.user_id ASC;";
+                $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id $search_query and do.is_active=1 order by do.user_id ASC;";
             else
-                $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id $search_query order by do.user_id ASC limit $limit_start,$limit_end; ";
+                $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id $search_query and do.is_active=1order by do.user_id ASC limit $limit_start,$limit_end; ";
         }else{
             if ( ($limit_start==0) && ($limit_end==0) )
-                $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id order by do.user_id ASC ";
+                $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id and do.is_active=1 order by do.user_id ASC ";
             else
-                $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id order by do.user_id ASC limit $limit_start,$limit_end;";
+                $query = "SELECT $cols FROM `donors` do inner join `districts` di on do.district = di.id and do.is_active=1 order by do.user_id ASC limit $limit_start,$limit_end;";
         }
         $sql = $conn->query($query);
         $sql->execute();
@@ -113,6 +113,58 @@ class Donor
             $obj->closeConnection();
             return $result;
         }
+    }
+
+    public function getValueOfDonor($col,$id)
+    {
+        $obj = new Database;
+        $conn = $obj->connect();
+        $query = "SELECT $col FROM `donors` do inner join districts di on do.user_id=di.id where do.user_id = :don";
+        $sql = $conn->prepare($query);
+        $sql->bindParam(':don',$id,PDO::PARAM_INT);
+        $sql->execute();
+        if ($sql->rowCount() > 0) {
+            $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+            foreach($result as $row)
+            {
+                $obj->closeConnection();
+                return $row[$col];
+            }
+        }
+    }
+
+    function getDistrictBasedOnID($id)
+    {
+        $obj = new Database;
+        $conn = $obj->connect();
+        $query = "SELECT * FROM `districts` where id = :did";
+        $sql = $conn->prepare($query);
+        $sql->bindParam(':did',$id,PDO::PARAM_INT);
+        $sql->execute();
+        if ($sql->rowCount() > 0) {
+            $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+            foreach($result as $row)
+            {
+                $obj->closeConnection();
+                return $row["name"];
+            }
+        }
+    }
+
+    function updateStatus($arr,$userid)
+    {   
+        $obj = new Database;
+        $conn = $obj->connect();
+        $status = $arr["availability"];
+        $query = "UPDATE `donors` set is_active = :stat where user_id = :uid;";
+        $sql = $conn->prepare($query);
+        $sql->bindParam(':stat',$status,PDO::PARAM_INT);
+        $sql->bindParam(':uid',$userid,PDO::PARAM_INT);
+        $sql->execute();
+        if ($sql) {
+            return true;
+        }
+        return false;
     }
 }
 

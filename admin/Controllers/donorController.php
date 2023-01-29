@@ -143,8 +143,6 @@ else if($first_part == 'editDonor.php')
     unset($Obj);
 }
 
-
-
 function getAllDonors( $search, $limit_start , $limit_end)
 {
     $Obj = new Donor;

@@ -241,7 +241,6 @@ class Donor
             {
                 if (file_exists($filename)) {
                 unlink($filename);
-                echo 'File '.$filename.' has been deleted';
                 return true;
                 } else {
                 echo 'Could not delete '.$filename.', file does not exist';

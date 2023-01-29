@@ -45,6 +45,25 @@ if(isset($_POST["insertDonor"]))
     
 }
 
+if(isset($_POST["updateStatus"]))
+{
+    if(isset($_SESSION["userid"]))
+    {
+        $insertObj = new Donor;
+        $result = $insertObj->updateStatus($_POST,$_SESSION["userid"]);
+        if(is_int($result))
+        {
+            unset($insertObj);
+            $message = '<div class="alert alert-danger alert-dismissible>Unable to Update Result</div>';
+        }else
+        {
+            unset($insertObj);
+            unset($_POST);
+            header("Location: ./profile.php");
+        }
+    }
+}
+
 if(isset($_GET["allDonors"]))
 {
     $user = new Donor;
@@ -67,6 +86,27 @@ if($first_part == 'search-donors.php')
     $allDonorsCount = $result->rowCount();
     unset($userObj);
 }
+else if($first_part == 'profile.php')
+{
+    if(isset($_SESSION["userid"]))
+    {
+        $Obj = new Donor;
+        $donor_id = $_SESSION["userid"];
+        $firstName = $Obj->getValueOfDonor("firstName",$donor_id);
+        $lastName = $Obj->getValueOfDonor("lastName",$donor_id);
+        $email = $Obj->getValueOfDonor("email",$donor_id);
+        $gender = $Obj->getValueOfDonor("gender",$donor_id);
+        $phone = $Obj->getValueOfDonor("phone",$donor_id);
+        $picture = $Obj->getValueOfDonor("picture",$donor_id);
+        $bloodtype = $Obj->getValueOfDonor("bloodtype",$donor_id);
+        $did = $Obj->getValueOfDonor("district",$donor_id);
+        $district_val = $Obj->getDistrictBasedOnID($did);
+        $status = $Obj->getValueOfDonor("is_active",$donor_id);  
+        unset($Obj);
+    }
+}
+
+
 
 function getAllDonors( $search, $limit_start , $limit_end)
 {

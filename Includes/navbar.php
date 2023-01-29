@@ -24,6 +24,8 @@
         <li class="nav-item">
           <a class="nav-link text-white" href="./contact.php">CONTACT US</a>
         </li>
+
+        <?php if(!isset($_SESSION["userid"])){ ?>
         <li class="nav-item m-1">
           <a class="btn btn-danger border w-100" href="./registration.php"> SIGN UP
             <i class="bi bi-person-plus"></i>
@@ -72,6 +74,16 @@
           </div>
       </div>
       <!-- end  modal form -->
+
+      <?php }else{ ?>
+
+        <li class="nav-item">
+          <a class="nav-link text-white" href="./profile.php">MY  PROFILE</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="./logout.php">LOGOUT</a>
+        </li>
+      <?php } ?>
         
       </ul>
     </div>
