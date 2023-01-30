@@ -230,7 +230,7 @@ for($i=0;$i < count($arr);$i++)
                       <div class="row">
                         <label for="formFile" class="form-label">Profile Picture</label>
                         <div class="col-6">
-                          <img src='<?= $picture ?>' style="max-width:100%" id="previewImg" />
+                          <img src='.<?= $picture ?>' style="max-width:100%" id="previewImg" />
                         </div>
                         <div class="col-6">
                           <div>

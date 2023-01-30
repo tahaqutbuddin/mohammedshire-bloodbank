@@ -236,7 +236,7 @@ class Donor
         if($sql->rowCount() > 0)
         {
             $result = $sql->fetchAll(PDO::FETCH_ASSOC);
-            $filename = $result[0]["picture"];
+            $filename = '.'.$result[0]["picture"];
             if( ($filename != NULL) && (strlen($filename) > 0) )
             {
                 if (file_exists($filename)) {

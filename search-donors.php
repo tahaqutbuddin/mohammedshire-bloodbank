@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once './Controllers/loginController.php';
 require_once './Includes/functions.php';
 
 $allDistricts = getAllDistrictsData(["id","name"]);

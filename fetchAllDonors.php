@@ -46,7 +46,7 @@ if($total_data > 0)
     <div class="col-md-3 m-1 p-2 border border-secondary rounded">
       <div class="member align-start d-flex p-1 m-1">
         <div class="m-1" >
-          <img src="'.$pic.'" style="max-width:100%" alt="">
+          <img src=".'.$pic.'" style="max-width:100%" alt="">
         </div>
 
         <div class="info">

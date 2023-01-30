@@ -26,6 +26,10 @@ if(isset($_POST["insertDonor"]))
         }
         $insertObj = new Donor;
         $imgPath = savePicture($_FILES);
+        if (substr($imgPath, 0, 2) === '..')
+        {
+            $imgPath = substr($imgPath, 1);    
+        }
         $_POST["picture"] = $imgPath;
         $result = $insertObj->insertDonor($_POST);
         if(is_int($result))
@@ -84,6 +88,10 @@ if(isset($_POST["saveDonor"]))
     if(strlen($_FILES["image"]['tmp_name']) > 0)
     {
         $imgPath = savePicture($_FILES);
+        if (substr($imgPath, 0, 2) === '..')
+        {
+            $imgPath = substr($imgPath, 1);    
+        }
         $updateObj->updateDonorImage($id,$imgPath);
     }
 
