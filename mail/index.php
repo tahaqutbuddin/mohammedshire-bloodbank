@@ -14,13 +14,13 @@ $mail->SMTPDebug  = 1;
 $mail->SMTPAuth   = TRUE;
 $mail->SMTPSecure = "tls";
 $mail->Port       = 587;
-$mail->Host       = "smtp.titan.email";
-$mail->Username   = "support@taajbook.com";
-$mail->Password   = "IweiSAdmBS";
+$mail->Host       = ""; 
+$mail->Username   = "";
+$mail->Password   = "";
 
 $mail->IsHTML(true);
-$mail->AddAddress("tahaqutbuddin5@gmail.com", "Taha Qutbuddin");
-$mail->SetFrom("support@taajbook.com", "Support");
+$mail->AddAddress("", ""); // Receiver's Address and Name
+$mail->SetFrom("", ""); // Senders's Address and title
 $mail->Subject = "Test is Test Email sent via Gmail SMTP Server using PHP Mailer";
 $content = "<b>This is a Test Email sent via Gmail SMTP Server using PHP mailer class.</b>";
 
